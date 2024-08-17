@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Aug2024TurnUpPortal": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
