@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,17 @@ namespace Aug2024TurnUpPortal.Pages
             //WebDriverWait wait = new WebDriverWait(driver, Timespan(5));
             //wait.Untill(SeleniumExtras.WaitHelpers.ExpectedConditions.ElemeyIsVisible(By.Id("UserName"));
 
-            //Identify user name textbox and enter valid user name
-        usernameTextbox = driver.FindElement(userNameTextboxLocator);
-        usernameTextbox.SendKeys("hari");
+            
+            try
+            {
+                //Identify user name textbox and enter valid user name
+                usernameTextbox = driver.FindElement(userNameTextboxLocator);
+                usernameTextbox.SendKeys("hari");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Username textbox not located");
+            }
 
         //Identify password textbox and enter valid password
         IWebElement passwordTextbox = driver.FindElement(By.Id("Password"));

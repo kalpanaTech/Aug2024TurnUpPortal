@@ -1,4 +1,5 @@
 ﻿using Aug2024TurnUpPortal.Utilities;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,17 @@ namespace Aug2024TurnUpPortal.Pages
     {
         public void CreateTimeRecord(IWebDriver driver)
         {
-            // Click on Create New Button
-            IWebElement createNewButton = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
-            createNewButton.Click();
+            
+            try
+            {
+                // Click on Create New Button
+                IWebElement createNewButton = driver.FindElement(By.XPath("//*[@id=\"container\"]/p/a"));
+                createNewButton.Click();
+            }
+            catch (NoSuchElementException ex)
+            {
+                Assert.Fail(ex.Message);
+            }
 
             // Select Time from dropdown
             IWebElement typeCodeDropdown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]/span"));
@@ -44,33 +53,52 @@ namespace Aug2024TurnUpPortal.Pages
             // Click on Save button
             IWebElement saveButton = driver.FindElement(By.Id("SaveButton"));
             saveButton.Click();
+            Thread.Sleep(4000);
+            //Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
+            //Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
 
-            Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
+            try 
+            {
+                // Check if Time record has been created successfully
+                IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+                goToLastPageButton.Click();
+            }
+            catch (NoSuchElementException ex)
+            {
+                Assert.Fail(ex.Message);
+            }
 
-            // Check if Time record has been created successfully
-            IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
-            goToLastPageButton.Click();
-
-            Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 10);
+            //Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 10);
 
             IWebElement newCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
 
-
-            if (newCode.Text == "TA Programme Aug")
-            {
-                Console.WriteLine("Time record successfull created");
-            }
-            else
-            {
-                Console.WriteLine("New time has not been created");
-            }
+            Assert.That(newCode.Text == "TA Programme Aug", "Time record has not been created");
+            
+            // if (newCode.Text == "TA Programme Aug")
+            //{
+            //    Assert.Pass("Time record successfull created");
+            // }
+            //else
+            //{
+            //   Assert.Fail("New time has not been created");
+            //}
         }
 
             public void EditTimeRocord(IWebDriver driver)
             {
-            //Go to the last page
-            IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
-            goToLastPageButton.Click();
+            Thread.Sleep(4000);
+            try
+            {
+                // Edit the last created record
+               IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+                goToLastPageButton.Click();
+            }
+            catch (NoSuchElementException ex)
+            {
+                Assert.Fail(ex.Message);
+            }
+
+            Thread.Sleep(2000);
 
             //Click on the Edit button
             IWebElement editButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]"));
@@ -100,32 +128,41 @@ namespace Aug2024TurnUpPortal.Pages
             IWebElement saveButton = driver.FindElement(By.Id("SaveButton"));
             saveButton.Click();
 
-            Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
+            Thread.Sleep(4000);
+            try
+            {
+                // Check if Time record has been created successfully
+                IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+                goToLastPageButton.Click();
+            }
+            catch (NoSuchElementException ex)
+            {
+                Assert.Fail(ex.Message);
+            }
 
-            // Check if Time record has been updated successfully
-            goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
-            goToLastPageButton.Click();
-
-            Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 12);
+            //Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]", 12);
 
             IWebElement newCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
 
-            if (newCode.Text == "TA Programme Sep")
-            {
-                Console.WriteLine("Material record successfull updated");
-            }
-            else
-            {
-                Console.WriteLine("Time record has not been updated");
-            }
+            Assert.That(newCode.Text == "TA Programme Sep", "Time record has not been updated");
+           
         }
 
             public void DeleteTimeRecord(IWebDriver driver)
             {
+            Thread.Sleep(4000);
+            try
+            {
+                // Delete the last created record
+                IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+                goToLastPageButton.Click();
+            }
+            catch (NoSuchElementException ex)
+            {
+                Assert.Fail(ex.Message);
+            }
 
-            //Go to the last page
-            IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
-            goToLastPageButton.Click();
+            Thread.Sleep(2000);
 
             // Click on the Delete Button
             IWebElement deleteButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]"));
@@ -138,9 +175,16 @@ namespace Aug2024TurnUpPortal.Pages
             Console.WriteLine("Alert text is, Are you sure you want to delete this record? " + alertText);
             simpleAlert.Accept();
 
-            //Go to the last page
-            goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
-            goToLastPageButton.Click();
+            try
+            {
+                // Check if Time record has been created successfully
+                IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+                goToLastPageButton.Click();
+            }
+            catch (NoSuchElementException ex)
+            {
+                Assert.Fail(ex.Message);
+            }
 
             IWebElement newCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
 
@@ -152,9 +196,6 @@ namespace Aug2024TurnUpPortal.Pages
             {
                 Console.WriteLine("Record deletion successfull");
             }
-        }
-            
-
-        
+        }  
     }
 }

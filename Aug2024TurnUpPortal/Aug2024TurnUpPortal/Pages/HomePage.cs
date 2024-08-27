@@ -22,5 +22,16 @@ namespace Aug2024TurnUpPortal.Pages
         timeAndMaterialOption.Click();
         }
 
+        public void NavigateToEMPPage(IWebDriver driver)
+        {
+            // Navigate to time and Material Page
+            IWebElement administrationTab = driver.FindElement(By.XPath("/html/body/div[3]/div/div/ul/li[5]/a/span"));
+            administrationTab.Click();
+
+            Wait.WaitToBeClickable(driver, "XPath", "/html/body/div[3]/div/div/ul/li[5]/ul/li[3]/a", 10);
+
+            IWebElement employeeOption = driver.FindElement(By.XPath("/html/body/div[3]/div/div/ul/li[5]/ul/li[2]/a"));
+            employeeOption.Click();
+        }
     }
 }
