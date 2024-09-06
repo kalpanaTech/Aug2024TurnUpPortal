@@ -7,9 +7,14 @@ using TechTalk.SpecFlow;
 
 namespace Aug2024TurnUpPortal.StepDefinition
 {
+
     [Binding]
     public class TMFeatureStepDefinitions : CommonDriver
     {
+        LoginPage loginPageObj = new LoginPage();
+        HomePage homePageObj = new HomePage();
+        TMPage tMPageObj = new TMPage();
+
         [Given(@"I logged into TurnUp portal successfully")]
         public void GivenILoggedIntoTurnUpPortalSuccessfully()
         {
@@ -17,63 +22,75 @@ namespace Aug2024TurnUpPortal.StepDefinition
             driver = new ChromeDriver();
 
             //Login page object initialization and definition
-            LoginPage loginPageObj = new LoginPage();
-            loginPageObj.LoginActions(driver);
 
+            loginPageObj.LoginActions(driver);
+        }
+
+        [Given(@"I logged into TurnUp portal successfully using '([^']*)' and '([^']*)'")]
+        public void GivenILoggedIntoTurnUpPortalSuccessfullyUsingAnd(string userName, string password)
+        {
+
+            //open Chrome Browser
+            driver = new ChromeDriver();
+
+            //Login page object initialization and definition
+
+            loginPageObj.LoginActions(driver);
         }
 
         [When(@"I navigate to Time and Material page")]
         public void WhenINavigateToTimeAndMaterialPage()
         {
             //Home page object initialization and definition : Navigate TO TM Page
-            HomePage homePageObj = new HomePage();
+
             homePageObj.NavigateTOTMPage(driver);
         }
 
-        [When(@"I create a time record")]
-        public void WhenICreateATimeRecord()
+        [When(@"I create a time record '([^']*)', '([^']*)', '([^']*)' and '([^']*)'")]
+        public void WhenICreateATimeRecordAnd(string typeCode, string code, string description, string price)
         {
-            //Create Time Record
-            TMPage tMPageObj = new TMPage();
-            tMPageObj.CreateTimeRecord(driver);
+            tMPageObj.CreateTimeRecord(driver, typeCode, code, description, price);
+        }     
+
+        [When(@"I update the '([^']*)', '([^']*)', '([^']*)' and '([^']*)' on an existing Time record")]
+        public void WhenIUpdateTheAndOnAnExistingTimeRecord(string  typeCode, string code, string description, string price)
+        {
+            tMPageObj.EditTimeRocord(driver, typeCode, code, description, price);
         }
 
-        [Then(@"the record should be created successfully")]
-        public void ThenTheRecordShouldBeCreatedSuccessfully()
+        [Then(@"the record should have the (created|updated) '([^']*)', '([^']*)', '([^']*)' and '([^']*)'")]
+        public void ThenTheRecordShouldHaveTheUpdatedAnd(string option, string typecode,string code, string description, string price)
         {
-            //create object from TMPage class
-            TMPage tMPageObj = new TMPage();
+            string editedTypeCode = tMPageObj.GetEditedTypeCode(driver);
+            string editedCode = tMPageObj.GetEditedCode(driver);
+            string editedDescription = tMPageObj.GetEditedDescription(driver);
+            string editedPrice = tMPageObj.GetEditedPrice(driver);
 
-            //call the 'GetCode()' mothod using the object 'tMPageObj' and assign the returned value to 'string newCode'
-            string newCode = tMPageObj.GetCode(driver);
-            string newDescription =  tMPageObj.GetDescription(driver);
-            string newPrice = tMPageObj.GetPrice(driver);
-          
-            //verify the stored value to 'newCode' 
-            Assert.That(newCode == "TA Programme KLD", "Actual Code and expected Coce do not match.");
-            Assert.That(newDescription == "This is a description", "Actual Description and expected Description do not match.");
-            Assert.That(newPrice == "$22.00", "Actual Price and expected Price do not match.");
-        
+            Assert.That(editedTypeCode == typecode, "Type code record has not been updated");
+            Assert.That(editedCode == code, "Time record has not been updated");
+            Assert.That(editedDescription == description, "Description record has not been updated");
+            Assert.That(editedPrice == "$" + price + ".00", "Price record has not been updated");
         }
 
-        [When(@"I update the '([^']*)' on an existing Time record")]
-        public void WhenIUpdateTheOnAnExistingTimeRecord(string code)
+        [When(@"I delete an existing record")]
+        public void WhenIDeleteAnExistingRecord()
         {
-            
-            TMPage tMPageObj = new TMPage();
-            tMPageObj.EditTimeRocord(driver, code);
+            tMPageObj.DeleteTimeRecord(driver);
         }
 
-        [Then(@"the record should have the updated '([^']*)'")]
-        public void ThenTheRecordShouldHaveTheUpdated(string code)
+        [Then(@"the record should not be similat to '([^']*)'")]
+        public void ThenTheRecordShouldNotBeSimilatTo(string storedCode)
         {
-            //create object from TMPage class
-            TMPage tMPageObj = new TMPage();
+            string deletedCode = tMPageObj.GetDeletedCode(driver);
 
-            //call the 'GetCode()' mothod using the object 'tMPageObj' and assign the returned value to 'string newCode'
-            string editCode = tMPageObj.GetEditedCode(driver);
+            Assert.That(deletedCode != storedCode, "Record has not been delete");
+        }
 
-            Assert.That(editCode == code, "Time record has not been updated");
+        [AfterScenario]
+
+        public void CloseTestRun()
+        {
+            driver.Quit();
         }
     }
 }

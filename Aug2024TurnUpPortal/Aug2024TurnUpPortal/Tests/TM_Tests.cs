@@ -36,7 +36,7 @@ namespace Aug2024TurnUpPortal.Tests
         {
             //Create Time Record
             TMPage tMPageObj = new TMPage();
-            tMPageObj.CreateTimeRecord(driver);
+            tMPageObj.CreateTimeRecord(driver, "", "", "", "");
         }
 
         [Test, Order(2), Description("This test will verified Time & Material Record update")]
@@ -44,7 +44,7 @@ namespace Aug2024TurnUpPortal.Tests
         {
             //Edit Time record
             TMPage tMPageObj = new TMPage();
-            tMPageObj.EditTimeRocord(driver, "");
+            tMPageObj.EditTimeRocord(driver, "", "", "", "");
         }
 
         [Test, Order(3), Description("This test will verified Time & Material Record delete")]

@@ -13,9 +13,9 @@ namespace Aug2024TurnUpPortal.Pages
 {
     public class TMPage
     {
-        public void CreateTimeRecord(IWebDriver driver)
+        public void CreateTimeRecord(IWebDriver driver, string typeCode, string code, string description, string price)
         {
-            
+
             try
             {
                 // Click on Create New Button
@@ -30,81 +30,65 @@ namespace Aug2024TurnUpPortal.Pages
             // Select Time from dropdown
             IWebElement typeCodeDropdown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]/span"));
             typeCodeDropdown.Click();
+            Thread.Sleep(2000);
 
-            IWebElement timeOption = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[2]"));
-            timeOption.Click();
+            if (typeCode == "T")
+            {
+                IWebElement timeOption = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[2]"));
+                timeOption.Click();
+                Thread.Sleep(2000);
+            }
+
+            else if (typeCode == "M")
+            {
+                IWebElement materialOption = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[1]"));
+                materialOption.Click();
+                Thread.Sleep(2000);
+            }
 
             // Type code into Code textbox
             IWebElement codeTextbox = driver.FindElement(By.Id("Code"));
-            codeTextbox.SendKeys("TA Programme KLD");
+            codeTextbox.SendKeys(code);
 
             // Type Description into Description textbox
             IWebElement descriptionTextbox = driver.FindElement(By.Id("Description"));
-            descriptionTextbox.SendKeys("This is a description");
+            descriptionTextbox.SendKeys(description);
 
             // Type price into Price textbox
             IWebElement priceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
             priceTagOverlap.Click();
 
             IWebElement priceTextbox = driver.FindElement(By.Id("Price"));
-            priceTextbox.SendKeys("22");
+            priceTextbox.SendKeys(price);
 
             Wait.WaitToBeClickable(driver, "Id", "SaveButton", 3);
 
             // Click on Save button
             IWebElement saveButton = driver.FindElement(By.Id("SaveButton"));
             saveButton.Click();
-            Thread.Sleep(8000);
-            //Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
+            Thread.Sleep(10000);
+
+            // Check if Time record has been created successfully
+            IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
+            Thread.Sleep(6000);
             Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
-
-            try 
-            {
-                // Check if Time record has been created successfully
-                IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
-                Thread.Sleep(4000);
-                //Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
-                goToLastPageButton.Click();
-            }
-            catch (NoSuchElementException ex)
-            {
-                Assert.Fail(ex.Message);
-            }
-
+            goToLastPageButton.Click();
+            Thread.Sleep(7000);
         }
 
-        public string GetCode(IWebDriver driver)
-        {
-            //Storing the Code value to newCode as a text
-            IWebElement newCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
-            return newCode.Text;
-            
-        }
-
-        public string GetDescription(IWebDriver driver)
-        {
-            IWebElement newDescription = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[3]"));
-            return newDescription.Text;
-        }
-
-        public string GetPrice(IWebDriver driver)
-        {
-            IWebElement newPrice = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[4]"));
-            return newPrice.Text;
-        }
-
-
-        public void EditTimeRocord(IWebDriver driver, string code)
+        public void EditTimeRocord(IWebDriver driver, string typeCode, string code, string description, string price)
         {
             IWebElement goToLastPageButton;
 
             Thread.Sleep(4000);
+           
             try
             {
                 // Edit the last created record
                 goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
                 Thread.Sleep(6000);
                 goToLastPageButton.Click();
+
             }
             catch (NoSuchElementException ex)
             {
@@ -115,9 +99,32 @@ namespace Aug2024TurnUpPortal.Pages
 
             //Click on the Edit button
             IWebElement editButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[1]"));
-            Thread.Sleep(4000);
+            Thread.Sleep(8000);
             editButton.Click();
-            
+
+            //Change the TypeCode
+            IWebElement typeCodeDropdown = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[1]/div/span[1]/span/span[2]/span"));
+            typeCodeDropdown.Click();
+
+            if (typeCode == "T")
+            {
+                IWebElement timeOption = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[2]"));
+                timeOption.Click();
+                Thread.Sleep(2000);
+            }
+
+            else if (typeCode == "M")
+            {
+                IWebElement materialOption = driver.FindElement(By.XPath("//*[@id=\"TypeCode_listbox\"]/li[1]"));
+                materialOption.Click();
+                Thread.Sleep(2000);
+            }
+            else
+            {
+                IWebElement selectedOption = driver.FindElement(By.XPath("//*[@id=\"TypeCode_option_selected\"]"));
+                selectedOption.Click();
+                Thread.Sleep(2000);
+            }
 
             // Change the Code
             IWebElement codeTextbox = driver.FindElement(By.Id("Code"));
@@ -127,43 +134,69 @@ namespace Aug2024TurnUpPortal.Pages
 
 
             // Chage the Description
-            //IWebElement descriptionTextbox = driver.FindElement(By.Id("Description"));
-            //descriptionTextbox.Clear();
-            //descriptionTextbox.SendKeys("This is an updated description");
+            IWebElement descriptionTextbox = driver.FindElement(By.Id("Description"));
+            descriptionTextbox.Clear();
+            descriptionTextbox.SendKeys(description);
 
             // Change the Price per unit
-            //IWebElement priceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
-            //priceTagOverlap.Click();
+            IWebElement priceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
+            priceTagOverlap.Click();
 
 
-            //IWebElement priceTextbox = driver.FindElement(By.Id("Price"));
-            //priceTextbox.Clear();
-            //priceTextbox.SendKeys("0");
+            IWebElement priceTextbox = driver.FindElement(By.Id("Price"));
+            priceTextbox.Clear();
+            Thread.Sleep(2000);
+
+            priceTagOverlap = driver.FindElement(By.XPath("//*[@id=\"TimeMaterialEditForm\"]/div/div[4]/div/span[1]/span/input[1]"));
+            priceTagOverlap.Click();
+            priceTextbox = driver.FindElement(By.Id("Price"));
+            Thread.Sleep(2000);
+            priceTextbox.Click();
+            priceTextbox.SendKeys(price);
 
             // Save the changes
+            // Click on Save button
             IWebElement saveButton = driver.FindElement(By.Id("SaveButton"));
             saveButton.Click();
             Thread.Sleep(4000);
-
+            
             // Check if Time record has been created successfully
-            //Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
-              
             goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
             Thread.Sleep(6000);
             Wait.WaitToBeClickable(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[4]/a[4]/span", 10);
             goToLastPageButton.Click();
-            Thread.Sleep(6000);
+            Thread.Sleep(10000);
+
         }
 
+        public string GetEditedTypeCode(IWebDriver driver)
+        {
+           // Wait.WaitToBeVisible(driver, "XPath", "//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[2]", 10);
+            IWebElement editedTypeCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[2]"));
+            return editedTypeCode.Text;
+        }
         public string GetEditedCode(IWebDriver driver)
         {
-            IWebElement editCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
-            return editCode.Text;
-
+            IWebElement editedCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
+            return editedCode.Text;
         }
-           
-            public void DeleteTimeRecord(IWebDriver driver)
-            {
+
+        public string GetEditedDescription(IWebDriver driver)
+        {
+            IWebElement editedDescription = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[3]"));
+            return editedDescription.Text;
+        }
+        public string GetEditedPrice(IWebDriver driver)
+        {
+            IWebElement editedPrice = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[4]"));
+            return editedPrice.Text;
+        }
+
+
+
+
+        public void DeleteTimeRecord(IWebDriver driver)
+        {
             Thread.Sleep(4000);
             try
             {
@@ -176,43 +209,43 @@ namespace Aug2024TurnUpPortal.Pages
             {
                 Assert.Fail(ex.Message);
             }
+            Thread.Sleep(7000);
 
-         
 
             // Click on the Delete Button
             IWebElement deleteButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[5]/a[2]"));
             deleteButton.Click();
-            
-            //Click OK to pop up window
 
-            IAlert simpleAlert = driver.SwitchTo().Alert();
-            String alertText = simpleAlert.Text;
-            Console.WriteLine("Alert text is, Are you sure you want to delete this record? " + alertText);
-            simpleAlert.Accept();
+            Thread.Sleep(4000);
 
+            //Click OK to delete 
+            driver.SwitchTo().Alert().Accept();
+
+            Thread.Sleep(3000);
+
+            driver.Navigate().Refresh();
+
+            Thread.Sleep(4000);
             try
             {
-                // Check if Time record has been created successfully
+                // Delete the last created record
                 IWebElement goToLastPageButton = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[4]/a[4]/span"));
                 Thread.Sleep(4000);
-
                 goToLastPageButton.Click();
             }
             catch (NoSuchElementException ex)
             {
                 Assert.Fail(ex.Message);
             }
+            
+            Thread.Sleep(7000);
+        }
 
-            IWebElement newCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
-
-            if (newCode.Text == "TA Programme Sep")
-            {
-                Console.WriteLine("Record deletion unsuccessfull");
-            }
-            else
-            {
-                Console.WriteLine("Record deletion successfull");
-            }
-        }  
+        public string GetDeletedCode(IWebDriver driver)
+        {
+            IWebElement deletedCode = driver.FindElement(By.XPath("//*[@id=\"tmsGrid\"]/div[3]/table/tbody/tr[last()]/td[1]"));
+            Thread.Sleep(7000);
+            return deletedCode.Text;
+        }
     }
 }

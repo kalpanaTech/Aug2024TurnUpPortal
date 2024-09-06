@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Aug2024TurnUpPortal.Utilities;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -13,21 +14,20 @@ namespace Aug2024TurnUpPortal.Pages
         private readonly By userNameTextboxLocator = By.Id("UserName");
         IWebElement usernameTextbox;
 
+        private readonly By passwordTextboxLocator = By.Id("Password");
+        IWebElement passwordTextbox;
+
+        private readonly By loginButtonLocator = By.XPath("//*[@id=\"loginForm\"]/form/div[3]/input[1]");
+        IWebElement loginButton;
+
         public void LoginActions(IWebDriver driver)
         {
-        //Lunch TurnUp portal
-        driver.Navigate().GoToUrl("http://horse.industryconnect.io/");
-        driver.Manage().Window.Maximize();
-        Thread.Sleep(3000);
+            //Lunch TurnUp portal
+            driver.Navigate().GoToUrl("http://horse.industryconnect.io/");
+            driver.Manage().Window.Maximize();
+            // Thread.Sleep(4000);
+            Wait.WaitToBeClickable(driver, "Id", "UserName", 4);
 
-            //Implicit wait
-            // WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-
-            //Explicit wait
-            //WebDriverWait wait = new WebDriverWait(driver, Timespan(5));
-            //wait.Untill(SeleniumExtras.WaitHelpers.ExpectedConditions.ElemeyIsVisible(By.Id("UserName"));
-
-            
             try
             {
                 //Identify user name textbox and enter valid user name
@@ -39,14 +39,28 @@ namespace Aug2024TurnUpPortal.Pages
                 Assert.Fail("Username textbox not located");
             }
 
-        //Identify password textbox and enter valid password
-        IWebElement passwordTextbox = driver.FindElement(By.Id("Password"));
-        passwordTextbox.SendKeys("123123");
+            try
+            {
+                //Identify password textbox and enter valid password
+                passwordTextbox = driver.FindElement(passwordTextboxLocator);
+                passwordTextbox.SendKeys("123123");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Password textbox not located");
+            }
 
-        //Identify login button and click on it
-        IWebElement loginButton = driver.FindElement(By.XPath("//*[@id=\"loginForm\"]/form/div[3]/input[1]"));
-        loginButton.Click();
-        Thread.Sleep(3000);
+            try
+            {
+                //Identify login button and click on it
+                loginButton = driver.FindElement(By.XPath("//*[@id=\"loginForm\"]/form/div[3]/input[1]"));
+                loginButton.Click();
+                Thread.Sleep(8000);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Login button not located");
+            }
         }
 
     }
